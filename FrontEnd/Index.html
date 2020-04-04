@@ -35,7 +35,7 @@
                 </tbody>
             </table>
         </div>
-
+        <!--Cadastro de contato-->
         <div class="container my-4" id="containerCadastroContato" style="display: none;">
             <div class="content text-center">
                 <h1>Novo Contato</h1>
@@ -47,7 +47,7 @@
                         <input type="text" class="form-control" id="inputNome">
                     </div>
                 </div>
-                    
+                <!--Telefone-->
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputTelefone">Telefone</label>
@@ -67,6 +67,71 @@
                         <thead>
                             <tr>
                                 <th class="col-4" scope="col">Telefones</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <!--Endereço-->
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputCep">CEP</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="inputCep">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="buscaCep">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputLogradouro">Logradouro</label>
+                        <input type="text" class="form-control" id="inputLogradouro">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputNumero">Número</label>
+                        <input type="text" class="form-control" id="inputNumero">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputBairro">Bairro</label>
+                        <input type="text" class="form-control" id="inputBairro">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputComp">Complemento</label>
+                        <input type="text" class="form-control" id="inputComp">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputCidade">Cidade</label>
+                        <input type="text" class="form-control" id="inputCidade">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputUF">UF</label>
+                        <input type="text" class="form-control" id="inputUF">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <button type="button" class="btn btn-outline-secondary" id="btnNovoEndereco" style="margin-bottom: 5px;">Cadastrar Endereço</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <table class="table" id="tableNovoContatoEnderecos" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th scope="col">CEP</th>
+                                <th scope="col">Logradouro</th>
+                                <th scope="col">Número</th>
+                                <th scope="col">Bairro</th>
+                                <th scope="col">Complemento</th>
+                                <th scope="col">Cidade</th>
+                                <th scope="col">UF</th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
