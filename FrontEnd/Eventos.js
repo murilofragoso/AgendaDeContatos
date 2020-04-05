@@ -80,15 +80,20 @@ $(document).ready(function () {
 
     //Adicionar um endereço
     $("#btnNovoEndereco").click(function(){
+        if($("#inputNumero").val() && isNaN($("#inputNumero").val())){
+            alert("O número da casa deve conter apenas números")
+            return;
+        }
+
         let linhaEndereco = 
         "<tr>" +
-            "<td>"+ $("#inputCep").val() + "</td>" +
-            "<td>"+ $("#inputLogradouro").val() + "</td>" +
-            "<td>"+ $("#inputNumero").val() + "</td>" +
-            "<td>"+ $("#inputBairro").val() + "</td>" +
-            "<td>"+ $("#inputComp").val() + "</td>" +
-            "<td>"+ $("#inputCidade").val() + "</td>" +
-            "<td>"+ $("#inputUF").val() + "</td>" +
+            "<td class='tdCep'>"+ $("#inputCep").val() + "</td>" +
+            "<td class='tdLogradouro'>"+ $("#inputLogradouro").val() + "</td>" +
+            "<td class='tdNumero'>"+ $("#inputNumero").val() + "</td>" +
+            "<td class='tdBairro'>"+ $("#inputBairro").val() + "</td>" +
+            "<td class='tdComp'>"+ $("#inputComp").val() + "</td>" +
+            "<td class='tdCidade'>"+ $("#inputCidade").val() + "</td>" +
+            "<td class='tdUf'>"+ $("#inputUF").val() + "</td>" +
             "<td class='btnTableExcluir'>Excluir</td>" +
         "</tr>"
 
@@ -106,4 +111,61 @@ $(document).ready(function () {
         $("#inputCidade").val("");
         $("#inputUF").val("");
     }
+
+    $("#formCadastroContato").submit(function(event){
+        //Verificando se existe algum telefone pendende te cadastro
+        if($("#inputTelefone").val()){
+            alert("Para cadastrar um telefone, clique em 'Cadastrar Telefone'");
+            event.preventDefault();
+            return;
+        }
+
+        //Verificando se existe algum endereço pendente de cadastro
+        if( $("#inputCep").val() || $("#inputLogradouro").val() || $("#inputNumero").val() || $("#inputBairro").val() ||
+            $("#inputComp").val() || $("#inputCidade").val() || $("#inputUF").val()){
+            alert("Para cadastrar um endereço, clique em 'Cadastrar Endereço'");
+            event.preventDefault();
+            return;
+        }
+
+        let tel = [];
+        let end = [];
+
+        //Recuperando telefones
+        $("#tableNovoContatoTelefones tbody tr").each(function(){
+            tel.push({numero: $(this).children().first().text()})
+        })
+
+        //Recuperando endereço
+        $("#tableNovoContatoEnderecos tbody tr").each(function(){
+            end.push(
+                {
+                    cep: $(this).children().filter($(".tdCep")).text(),
+                    logradouro: $(this).children().filter($(".tdLogradouro")).text(),
+                    numero: $(this).children().filter($(".tdNumero")).text(),
+                    bairro: $(this).children().filter($(".tdBairro")).text(),
+                    complemento: $(this).children().filter($(".tdComp")).text(),
+                    cidade: $(this).children().filter($(".tdCidade")).text(),
+                    uf: $(this).children().filter($(".tdUf")).text(),
+                }
+            )
+        })
+
+        let contato = {
+            nome: $("#inputNome").val(),
+            telefones: JSON.stringify(tel),
+            enderecos: JSON.stringify(end)
+        }
+        
+        $.ajax({
+            url: "http://localhost:3000/contato",
+            type: 'post',
+            data: contato
+        }).done(function(retorno){
+            //atualizar lista de contatos
+            console.log(retorno)
+        }).fail(function(jqXHR, textStatus, msg){
+            alert("Erro ao salvar contato: " + msg)
+        });
+    })
 })
