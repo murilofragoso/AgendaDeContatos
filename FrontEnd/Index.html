@@ -16,27 +16,20 @@
                     <button type="button" class="btn btn-outline-secondary" id="btnNovoContato" style="margin-bottom: 5px;">Novo Contato</button>
                 </div>
             </div>
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover" id="tableContatos">
+                <thead> 
                     <tr>
-                        <th scope="col">Contato</th>
+                        <th class="col-4" scope="col">Contato</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Mark</td>
-                    </tr>
-                    <tr>
-                        <td>Jacob</td>
-                    </tr>
-                    <tr>
-                        <td>Larry</td>
-                    </tr>
                 </tbody>
             </table>
         </div>
         <!--Cadastro de contato-->
         <div class="container my-4" id="containerCadastroContato" style="display: none;">
+            <input type="hidden" id="hddnIdContato">
             <div class="content text-center">
                 <h1>Novo Contato</h1>
             </div>
@@ -139,7 +132,10 @@
                         </tbody>
                     </table>
                 </div>
-                <button type="submit" class="btn btn-primary">Salvar</button>
+                <div class="btn-toolbar justify-content-between" role="toolbar">
+                    <button type="reset" class="btn btn-danger" id="btnCancelarNovoContato">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
             </form>
         </div>
     </body>

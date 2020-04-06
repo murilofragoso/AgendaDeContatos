@@ -1,8 +1,16 @@
 $(document).ready(function () {
-    // Abrir tela de cadastr de contato
+    // Abrir tela de cadastro de contato
     $("#btnNovoContato").click(function(){
         $("#containerContatos").hide();
         $("#containerCadastroContato").show();
+        $("#hddnIdContato").val("");
+    })
+
+    // Fechar tela de cadastro de contato
+    $("#btnCancelarNovoContato").click(function(){
+        $("#containerCadastroContato").hide();
+        $("#containerContatos").show();
+        // OBS: não é necessário limpar os campos manualmente, pois o botão é do tipo "reset"
     })
 
     //Adicionar um telefone a lista de telefones do contato
@@ -51,12 +59,12 @@ $(document).ready(function () {
     $("#buscaCep").click(function(){
         let cep = $("#inputCep").val();
 
-        // Validando tamanho do cep
-        if(cep.length != 8){
-            alert("CEP deve possuir 8 dígitos")
-            return;
-        }else if(isNaN(cep)){
+        // Validando o cep
+        if(isNaN(cep)){
             alert("CEP deve possuir apenas números")
+            return;
+        }else if(cep.length != 8){
+            alert("CEP deve possuir 8 dígitos")
             return;
         }
 
@@ -112,7 +120,24 @@ $(document).ready(function () {
         $("#inputUF").val("");
     }
 
+    //Excluir um endereço da lista de endereços do contato
+    $("#tableNovoContatoEnderecos").on("click", ".btnTableExcluir", function(){
+        if(confirm("Deseja excluir esse endereço?")){
+            $(this).closest('tr').remove();
+        }
+        if($("#tableNovoContatoEnderecos tbody td").length == 0)
+            $("#tableNovoContatoEnderecos").hide();
+    })
+
+    // Submit do form de cadastro
     $("#formCadastroContato").submit(function(event){
+        //Verificando nome
+        if(!$("#inputNome").val()){
+            alert("É necessário adicionar um nome ao contato");
+            event.preventDefault();
+            return;
+        }
+
         //Verificando se existe algum telefone pendende te cadastro
         if($("#inputTelefone").val()){
             alert("Para cadastrar um telefone, clique em 'Cadastrar Telefone'");
@@ -156,16 +181,123 @@ $(document).ready(function () {
             telefones: JSON.stringify(tel),
             enderecos: JSON.stringify(end)
         }
-        
+
+        if($("#hddnIdContato").val())
+            contato._id = $("#hddnIdContato").val()
+
         $.ajax({
             url: "http://localhost:3000/contato",
-            type: 'post',
+            type: contato._id ? 'PUT': 'POST',
             data: contato
         }).done(function(retorno){
             //atualizar lista de contatos
-            console.log(retorno)
+            getContatos();
         }).fail(function(jqXHR, textStatus, msg){
             alert("Erro ao salvar contato: " + msg)
         });
+    })
+
+    //Recuperando contatos
+    var contatos;
+    function getContatos(){
+        $.ajax({
+            url: "http://localhost:3000/contato",
+            type: 'get',
+        }).done(function(data){
+            //atualizar lista de contatos
+            contatos = data;
+            let linhasTabela = "";
+            $.each(data, function(index, valor){
+                linhasTabela += 
+                "<tr data-id=" + valor._id + " class='linhaTabelaContatos'>" +
+                    "<td>"+ valor.nome + "</td>" +
+                    "<td class='btnTableExcluir'>Excluir</td>" +
+                "</tr>";
+            })
+            $("#tableContatos").append(linhasTabela);
+        }).fail(function(jqXHR, textStatus, msg){
+            alert("Erro ao recuperar contatos: " + msg)
+        });
+
+    }
+    getContatos();
+
+    //Abrindo contatos
+    $("#tableContatos").on("click", ".linhaTabelaContatos", function(event){
+        // não abrir caso o local da linha clicado for o botão de excluir
+        if($(event.target).is(".btnTableExcluir")){
+            event.stopPropagation();
+            return;
+        }
+
+        let id = $(this).attr("data-id");
+        //Buscando o contato clicado
+        let contato;
+        contatos.forEach(element => {
+            if(element._id == id)
+                contato = element;
+        });
+
+        if(!contato){
+            alert("Contato não encontrado");
+            return;
+        }
+
+        $("#containerContatos").hide();
+        $("#containerCadastroContato").show();
+
+        //setando o id
+        $("#hddnIdContato").val(id);
+        
+        //setando o nome
+        $("#inputNome").val(contato.nome);
+
+        //setando telefones
+        if(contato.telefones){
+            contato.telefones.forEach(element => {
+                $("#tableNovoContatoTelefones tbody").append("<tr><td>"+ element.numero + "</td><td class='btnTableExcluir'>Excluir</td></tr>")
+            });
+            $("#tableNovoContatoTelefones").show();
+        }
+
+        //setando endereços
+        if(contato.enderecos){
+            let linhasEndereco = "";
+            contato.enderecos.forEach(element => {
+                linhasEndereco += 
+                    "<tr>" +
+                        "<td class='tdCep'>"+ element.cep + "</td>" +
+                        "<td class='tdLogradouro'>"+ element.logradouro + "</td>" +
+                        "<td class='tdNumero'>"+ element.numero + "</td>" +
+                        "<td class='tdBairro'>"+ element.bairro + "</td>" +
+                        "<td class='tdComp'>"+ element.complemento + "</td>" +
+                        "<td class='tdCidade'>"+ element.cidade + "</td>" +
+                        "<td class='tdUf'>"+ element.uf + "</td>" +
+                        "<td class='btnTableExcluir'>Excluir</td>" +
+                    "</tr>"
+            });
+    
+            $("#tableNovoContatoEnderecos tbody").append(linhasEndereco);
+            $("#tableNovoContatoEnderecos").show();
+        }
+    })
+
+    // Excluindo contato
+    $("#tableContatos").on("click", ".btnTableExcluir", function(){
+        if(confirm("Deseja excluir esse contato?")){
+            let linha = $(this).closest('tr');
+            $.ajax({
+                url: "http://localhost:3000/contato",
+                type: 'delete',
+                data: {
+                    _id: linha.attr("data-id")
+                }
+            }).done(function(data){
+                //atualizar lista de contatos
+                linha.remove();
+            }).fail(function(jqXHR, textStatus, msg){
+                alert("Erro ao excluir contato: " + msg)
+            });
+        }
     })
 })
