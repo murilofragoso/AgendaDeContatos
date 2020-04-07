@@ -198,7 +198,7 @@ $(document).ready(function () {
     })
 
     //Recuperando contatos
-    var contatos;
+    var contatos; // Variavel usada para abrir um contato e pesquisar
     function getContatos(){
         $.ajax({
             url: "http://localhost:3000/contato",
@@ -206,21 +206,77 @@ $(document).ready(function () {
         }).done(function(data){
             //atualizar lista de contatos
             contatos = data;
-            let linhasTabela = "";
+            let contatosAgrupados = [];
+            let sugestoes = "";
+            // Agrupando contatos e preparando para adiciona-los na sugestão de busca
             $.each(data, function(index, valor){
-                linhasTabela += 
-                "<tr data-id=" + valor._id + " class='linhaTabelaContatos'>" +
-                    "<td>"+ valor.nome + "</td>" +
-                    "<td class='btnTableExcluir'>Excluir</td>" +
-                "</tr>";
+                // Montando opção que será adicionada na sugestão de busca
+                sugestoes += "<option value='"+ valor.nome + "'></option>";
+                // Pegando inicial do contato atual
+                let inicialNome = valor.nome.substr(0,1).toUpperCase();
+
+                //Verificando se ja existe um grupo com essa inicial
+                let posicao;
+                $.each(contatosAgrupados, function(index, valor){
+                    if(valor.inicial == inicialNome)
+                        posicao = index;
+                })
+
+                //Caso ja exista, adicionar este contato na lista deste grupo
+                if(!isNaN(posicao)){
+                    contatosAgrupados[posicao].contatos.push(valor)
+                }else{ // Se não, criar novo agrupamento
+                    contatosAgrupados.push({
+                        inicial: inicialNome,
+                        contatos: [valor]
+                    })
+                }
             })
-            $("#tableContatos").append(linhasTabela);
+
+            // Ordenando contatos em ordem alfabética
+            contatosAgrupados.sort(compararContatosAgrupados)
+
+            // Adicionando linhas
+            let linhasTabela = "";
+            $.each(contatosAgrupados, function(index, valor){
+                linhasTabela = 
+                "<tr>" +
+                    "<th>"+ valor.inicial +"</th>" +
+                    "<th></th>" +
+                "</tr>";
+
+                $.each(valor.contatos, function(index, valor){
+                    linhasTabela +=
+                        "<tr data-id=" + valor._id + " class='linhaTabelaContatos'>" +
+                            "<td>"+ valor.nome + "</td>" +
+                            "<td class='btnTableExcluir'>Excluir</td>" +
+                        "</tr>";
+                })
+                $("#tableContatos").append(linhasTabela);
+            })
+
+            // Adicionando contatos na sugestão de busca
+            $("#datalistBuscaContato").html(sugestoes); // Adicionando opçoes
         }).fail(function(jqXHR, textStatus, msg){
             alert("Erro ao recuperar contatos: " + msg)
         });
 
     }
     getContatos();
+
+    // Função para ordenar lista de contatos agrupados
+    function compararContatosAgrupados(a, b){
+        const inicialA = a.inicial;
+        const inicialB = b.inicial;
+
+        let comparacao = 0;
+        if (inicialA > inicialB)
+            comparacao = 1
+        else if (inicialA < inicialB)
+            comparacao = -1
+
+        return comparacao;
+    }
 
     //Abrindo contatos
     $("#tableContatos").on("click", ".linhaTabelaContatos", function(event){
@@ -300,4 +356,58 @@ $(document).ready(function () {
             });
         }
     })
+
+    // Filtrando contatos
+    $("#btnBuscaContato").click(function(){
+        let linhasFiltradas = "";
+        let valorBusca = $("#inputBusca").val().toUpperCase();
+
+        // Caso não exista valor na busca, refazer o get e voltar com o agrupamento
+        if(!valorBusca){
+            $("#tableContatos tbody").html("");
+            getContatos();
+            return;
+        }
+
+        // Ordenando contatos
+        contatos.sort(compararContatos);
+
+        contatos.forEach(element =>{
+            if(element.nome.toUpperCase().indexOf(valorBusca) != -1)
+                linhasFiltradas += 
+                    "<tr data-id=" + element._id + " class='linhaTabelaContatos'>" +
+                        "<td>"+ element.nome + "</td>" +
+                        "<td class='btnTableExcluir'>Excluir</td>" +
+                    "</tr>";
+        })
+        $("#tableContatos tbody").html(linhasFiltradas);
+        
+    })
+
+    // Função para ordenar lista de contatos
+    function compararContatos(a, b){
+        const nomeA = a.nome;
+        const nomeB = b.nome;
+
+        let comparacao = 0;
+        if (nomeA > nomeB)
+            comparacao = 1
+        else if (nomeA < nomeB)
+            comparacao = -1
+
+        return comparacao;
+    }
+
+    //Abrir tela de cadastro
+    $("#btnOpenCadastro").click(function(){
+        $("#containerLogin").hide();
+        $("#containerCadastro").show();
+    })
+
+    //Cancelar cadastro
+    $("#btnCancelarCadastro").click(function(){
+        $("#containerCadastro").hide();
+        $("#containerLogin").show();
+    })
+
 })

@@ -9,13 +9,66 @@
         <script src="Eventos.js"></script>
     </head>
     <body>
-        <div class="container my-4" id="containerContatos">
+        <div class="container my-4" id="containerLogin">
+            <div class="content text-center">
+                <h1>Login</h1>
+            </div>
+            <form id="formLogin">
+                <div class="form-group">
+                    <label for="inputEmailLogin">E-mail</label>
+                    <input type="email" class="form-control" id="inputEmailLogin">
+                </div>
+                <div class="form-group">
+                    <label for="inputSenhaLogin">Senha</label>
+                    <input type="password" class="form-control" id="inputSenhaLogin">
+                </div>
+                <button type="submit" class="btn btn btn-primary btn-lg btn-block">Enviar</button>
+            </form>
+            <div class="content text-center">
+                <button type="button" class="btn btn btn-secondary btn-lg btn-block" id="btnOpenCadastro">Cadastre-se</button>
+            </div>
+        </div>
+        <div class="container my-4" id="containerCadastro" style="display: none;">
+            <div class="content text-center">
+                <h1>Cadastro</h1>
+            </div>
+            <form id="formLogin">
+                <div class="form-group">
+                    <label for="inputEmail">E-mail</label>
+                    <input type="email" class="form-control" id="inputEmail">
+                </div>
+                <div class="form-group">
+                    <label for="inputSenha">Senha</label>
+                    <input type="password" class="form-control" id="inputSenha">
+                </div>
+                <div class="form-group">
+                    <label for="inputConfirmarSenha">Confirme sua senha</label>
+                    <input type="password" class="form-control" id="inputConfirmarSenha">
+                </div>
+                <div class="btn-toolbar justify-content-between" role="toolbar">
+                    <button type="reset" class="btn btn-danger" id="btnCancelarCadastro">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+        <div class="container my-4" id="containerContatos" style="display: none;">
             <div class="content text-center">
                 <h1>Contatos</h1>
                 <div class="text-right">
-                    <button type="button" class="btn btn-outline-secondary" id="btnNovoContato" style="margin-bottom: 5px;">Novo Contato</button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnNovoContato" style="margin-bottom: 10px;">Novo Contato</button>
                 </div>
             </div>
+            <form id="formBuscaContatos">
+                <div class="input-group mb-3">
+                    <input type="search" class="form-control" aria-describedby="btnBuscaContato" list="datalistBuscaContato" id="inputBusca">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="btnBuscaContato">Buscar</button>
+                    </div>
+                  </div>
+                  <datalist id="datalistBuscaContato">
+                        
+                  </datalist>
+              </form>
             <table class="table table-hover" id="tableContatos">
                 <thead> 
                     <tr>
