@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    var idUsuarioLogado = "" // id setado ao fazer o login, caso esteja vazio, ao buscar os contatos será redirecionado para o login
+
     // Abrir tela de cadastro de contato
     $("#btnNovoContato").click(function(){
         $("#containerContatos").hide();
@@ -10,6 +12,7 @@ $(document).ready(function () {
     $("#btnCancelarNovoContato").click(function(){
         $("#containerCadastroContato").hide();
         $("#containerContatos").show();
+        limpaListaTelefonesEndereco();
         // OBS: não é necessário limpar os campos manualmente, pois o botão é do tipo "reset"
     })
 
@@ -131,17 +134,22 @@ $(document).ready(function () {
 
     // Submit do form de cadastro
     $("#formCadastroContato").submit(function(event){
+        event.preventDefault();
+
+        if(!idUsuarioLogado){
+            redirectToLogin();
+            return;
+        }
+
         //Verificando nome
         if(!$("#inputNome").val()){
             alert("É necessário adicionar um nome ao contato");
-            event.preventDefault();
             return;
         }
 
         //Verificando se existe algum telefone pendende te cadastro
         if($("#inputTelefone").val()){
             alert("Para cadastrar um telefone, clique em 'Cadastrar Telefone'");
-            event.preventDefault();
             return;
         }
 
@@ -149,7 +157,6 @@ $(document).ready(function () {
         if( $("#inputCep").val() || $("#inputLogradouro").val() || $("#inputNumero").val() || $("#inputBairro").val() ||
             $("#inputComp").val() || $("#inputCidade").val() || $("#inputUF").val()){
             alert("Para cadastrar um endereço, clique em 'Cadastrar Endereço'");
-            event.preventDefault();
             return;
         }
 
@@ -179,7 +186,8 @@ $(document).ready(function () {
         let contato = {
             nome: $("#inputNome").val(),
             telefones: JSON.stringify(tel),
-            enderecos: JSON.stringify(end)
+            enderecos: JSON.stringify(end),
+            idUsuario: idUsuarioLogado
         }
 
         if($("#hddnIdContato").val())
@@ -191,17 +199,32 @@ $(document).ready(function () {
             data: contato
         }).done(function(retorno){
             //atualizar lista de contatos
+            limpaListaTelefonesEndereco();
+            $("#containerCadastroContato").hide();
             getContatos();
         }).fail(function(jqXHR, textStatus, msg){
             alert("Erro ao salvar contato: " + msg)
         });
     })
 
+    // método para limpar listas de telefones e endereços
+    function limpaListaTelefonesEndereco(){
+        $("#tableNovoContatoTelefones tbody").html(""); 
+        $("#tableNovoContatoTelefones").hide();
+        $("#tableNovoContatoEnderecos tbody").html("");
+        $("#tableNovoContatoEnderecos").hide();
+    }
+
     //Recuperando contatos
     var contatos; // Variavel usada para abrir um contato e pesquisar
     function getContatos(){
+        if(!idUsuarioLogado){
+            redirectToLogin();
+            return;
+        }
+
         $.ajax({
-            url: "http://localhost:3000/contato",
+            url: "http://localhost:3000/contato?idUsuario=" + idUsuarioLogado,
             type: 'get',
         }).done(function(data){
             //atualizar lista de contatos
@@ -237,6 +260,7 @@ $(document).ready(function () {
             contatosAgrupados.sort(compararContatosAgrupados)
 
             // Adicionando linhas
+            $("#tableContatos tbody").html(""); // Limpando tabela antes de adicionar novas linhas
             let linhasTabela = "";
             $.each(contatosAgrupados, function(index, valor){
                 linhasTabela = 
@@ -257,12 +281,12 @@ $(document).ready(function () {
 
             // Adicionando contatos na sugestão de busca
             $("#datalistBuscaContato").html(sugestoes); // Adicionando opçoes
+            $("#containerContatos").show();
         }).fail(function(jqXHR, textStatus, msg){
             alert("Erro ao recuperar contatos: " + msg)
         });
 
     }
-    getContatos();
 
     // Função para ordenar lista de contatos agrupados
     function compararContatosAgrupados(a, b){
@@ -350,7 +374,7 @@ $(document).ready(function () {
                 }
             }).done(function(data){
                 //atualizar lista de contatos
-                linha.remove();
+                getContatos();
             }).fail(function(jqXHR, textStatus, msg){
                 alert("Erro ao excluir contato: " + msg)
             });
@@ -409,5 +433,62 @@ $(document).ready(function () {
         $("#containerCadastro").hide();
         $("#containerLogin").show();
     })
+
+    //Cadastrar usuário
+    $("#formCadastro").submit(function(event){
+        let usuario = {
+            nome: $("#inputNomeCadastro").val(),
+            email: $("#inputEmail").val(),
+            senha: $("#inputSenha").val()
+        }
+
+        if(usuario.senha != $("#inputConfirmarSenha").val()){
+            alert("Senhas não conferem");
+            event.preventDefault();
+            return;
+        }
+
+        $.ajax({
+            url: "http://localhost:3000/usuario",
+            type: 'POST',
+            data: usuario
+        }).done(function(){
+            alert("Cadastro efetuado com sucesso")
+        }).fail(function(jqXHR, textStatus, msg){
+            alert("Erro ao cadastrar: " + msg)
+        });
+        
+    })
+
+    //Login usuário
+    $("#formLogin").submit(function(event){
+        event.preventDefault();
+
+        let usuario = {
+            email: $("#inputEmailLogin").val(),
+            senha: $("#inputSenhaLogin").val()
+        }
+
+        $.ajax({
+            url: "http://localhost:3000/usuario/login",
+            type: 'POST',
+            data: usuario
+        }).done(function(result){
+            idUsuarioLogado = result;
+            $("#containerLogin").hide();
+            getContatos();
+        }).fail(function(jqXHR, textStatus, msg){
+            alert("Erro ao cadastrar: " + msg)
+        });
+    })
+
+    function redirectToLogin(){
+        alert("Você não está logado");
+        //Redirecionando para login
+        $("#containerContatos").hide();
+        $("#containerCadastroContato").hide();
+        $("#containerCadastro").hide();
+        $("#containerLogin").show();
+    }
 
 })

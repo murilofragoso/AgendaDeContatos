@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const esquemaContato = mongoose.Schema({
+    idUsuario:{
+        type: String,
+        required: true
+    },
     nome: {
         type: String,
         required: true
