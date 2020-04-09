@@ -48,6 +48,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "morgan",
         "npm:1.9.1"
+      ],
+      [
+        "nodemailer",
+        "npm:6.4.6"
       ]
     ],
     "locationBlacklistData": [
@@ -61,7 +65,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "virtual:3c4f7f349789d7597b53f6806dcbf71445596dd97a6a139314a632324e544d12b73623cfb0621bb9d37d8830b5ffbaf5935d9d709ca211a5a162bb877a1524e9#npm:2.6.9"],
             ["express", "npm:4.16.4"],
             ["mongoose", "npm:5.9.7"],
-            ["morgan", "npm:1.9.1"]
+            ["morgan", "npm:1.9.1"],
+            ["nodemailer", "npm:6.4.6"]
           ],
           "linkType": "SOFT",
         }]
@@ -95,7 +100,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["debug", "virtual:3c4f7f349789d7597b53f6806dcbf71445596dd97a6a139314a632324e544d12b73623cfb0621bb9d37d8830b5ffbaf5935d9d709ca211a5a162bb877a1524e9#npm:2.6.9"],
             ["express", "npm:4.16.4"],
             ["mongoose", "npm:5.9.7"],
-            ["morgan", "npm:1.9.1"]
+            ["morgan", "npm:1.9.1"],
+            ["nodemailer", "npm:6.4.6"]
           ],
           "linkType": "SOFT",
         }]
@@ -621,6 +627,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/negotiator-npm-0.6.2-ba538e167a-2.zip/node_modules/negotiator/",
           "packageDependencies": [
             ["negotiator", "npm:0.6.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["nodemailer", [
+        ["npm:6.4.6", {
+          "packageLocation": "./.yarn/unplugged/nodemailer-npm-6.4.6-a7c8d15782/node_modules/nodemailer/",
+          "packageDependencies": [
+            ["nodemailer", "npm:6.4.6"]
           ],
           "linkType": "HARD",
         }]

@@ -30,6 +30,7 @@ __metadata:
     express: ~4.16.1
     mongoose: ^5.9.1
     morgan: ~1.9.1
+    nodemailer: ^6.4.6
   languageName: unknown
   linkType: soft
 
@@ -475,6 +476,13 @@ __metadata:
   version: 0.6.2
   resolution: "negotiator@npm:0.6.2"
   checksum: 2/4b230bd15f0862d16c54ce0243fcfcf835ad59c8e58c467b4504dd28c9868cff71ff485b02cc575dc69dca819b58a1fadc9fb28403f45721f38a8fffde007d54
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^6.4.6":
+  version: 6.4.6
+  resolution: "nodemailer@npm:6.4.6"
+  checksum: 2/ee0849548e3ff8df5187bb7f5c7a882e3ce35813fbbb1c50f5fb11f3c79e2087751a09a65055c4e361079db3e9ed09d011452bdd1f803b63f9df5a3b187dc97b
   languageName: node
   linkType: hard
 

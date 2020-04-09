@@ -1,5 +1,16 @@
 const Usuario = require('../models/Usuario')
 const crypto = require('crypto');
+// Itens para envio de email
+const nodeMailer = require('nodemailer')
+const transporter = nodeMailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: "desafioagendadecontatos@gmail.com",
+        pass: "agendadecontatos159"
+    }
+})
 
 const controller = {}
 
@@ -23,7 +34,23 @@ controller.novo = async (req, res) => {
 
     try{
         await Usuario.create(usuario)
-        res.sendStatus(201)
+        // Configurando e-mail a ser enviado
+        let mailOptions = {
+            from: 'no-reply@agendacontatos.com',
+            to: usuario.email,
+            subject: 'Bem vindo a Agenda de Contatos!',
+            text: 'Obrigado por se cadastrar na nossa agenda de contatos!'
+        };
+
+        // Enviando e-mail
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+                res.status(500).send(error)
+            } else {
+                res.sendStatus(201)
+            }
+        });
     }
     catch(erro){
         console.log(erro)
