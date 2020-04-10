@@ -1,11 +1,10 @@
 $(document).ready(function () {
-    var idUsuarioLogado = "" // id setado ao fazer o login, caso esteja vazio, ao buscar os contatos será redirecionado para o login
-
     // Abrir tela de cadastro de contato
     $("#btnNovoContato").click(function(){
         $("#containerContatos").hide();
         $("#containerCadastroContato").show();
         $("#hddnIdContato").val("");
+        $("#divTituloCadastroContato").html("<h1>Novo Contato</h1>")
     })
 
     // Fechar tela de cadastro de contato
@@ -132,9 +131,10 @@ $(document).ready(function () {
             $("#tableNovoContatoEnderecos").hide();
     })
 
-    // Submit do form de cadastro
+    // Submit do form de cadastro de contato
     $("#formCadastroContato").submit(function(event){
         event.preventDefault();
+        let idUsuarioLogado = window.localStorage.getItem('idUsuarioLogado');
 
         if(!idUsuarioLogado){
             redirectToLogin();
@@ -209,6 +209,7 @@ $(document).ready(function () {
 
     // método para limpar listas de telefones e endereços
     function limpaListaTelefonesEndereco(){
+        $("#inputNome").val("");
         $("#tableNovoContatoTelefones tbody").html(""); 
         $("#tableNovoContatoTelefones").hide();
         $("#tableNovoContatoEnderecos tbody").html("");
@@ -218,6 +219,7 @@ $(document).ready(function () {
     //Recuperando contatos
     var contatos; // Variavel usada para abrir um contato e pesquisar
     function getContatos(){
+        let idUsuarioLogado = window.localStorage.getItem('idUsuarioLogado');
         if(!idUsuarioLogado){
             redirectToLogin();
             return;
@@ -358,6 +360,7 @@ $(document).ready(function () {
             });
     
             $("#tableNovoContatoEnderecos tbody").append(linhasEndereco);
+            $("#divTituloCadastroContato").html("<h1>Editar Contato</h1>")
             $("#tableNovoContatoEnderecos").show();
         }
     })
@@ -474,7 +477,7 @@ $(document).ready(function () {
             type: 'POST',
             data: usuario
         }).done(function(result){
-            idUsuarioLogado = result;
+            window.localStorage.setItem('idUsuarioLogado', result)
             $("#containerLogin").hide();
             getContatos();
         }).fail(function(jqXHR, textStatus, msg){
@@ -490,5 +493,19 @@ $(document).ready(function () {
         $("#containerCadastro").hide();
         $("#containerLogin").show();
     }
+
+    function redirectToContacts(){
+        if(window.localStorage.getItem('idUsuarioLogado')){
+            $("#containerLogin").hide();
+            getContatos();
+        }
+    }
+    redirectToContacts();
+
+    $("#btnLogOut").click(function(){
+        window.localStorage.removeItem('idUsuarioLogado');
+        $("#containerContatos").hide();
+        $("#containerLogin").show();
+    })
 
 })

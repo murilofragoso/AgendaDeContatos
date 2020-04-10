@@ -65,13 +65,17 @@ controller.login = async (req, res) => {
         const result = await Usuario.find({email: {$regex: usuario.email, $options: 'i'}});
         if(result.length > 0){
             let conta = result[0] // find retorna uma lista de usuarios, mas preciso apenas do primeiro
-            if(conta.senha == usuario.senha)
+            if(conta.senha == usuario.senha){
                 res.status(200).send(conta._id);
+            }
+            else{
+                res.status(400).send("E-mail ou senha incorretas")
+            }
     
-            res.status(400).send("E-mail ou senha incorretas")
+        }else{
+            res.status(404).send("E-mail não encontrado");
         }
 
-        res.status(404).send("E-mail não encontrado");
     }
     catch(erro){
         console.log(erro)

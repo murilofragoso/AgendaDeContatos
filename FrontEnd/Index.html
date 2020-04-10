@@ -58,7 +58,8 @@
         <div class="container my-4" id="containerContatos" style="display: none;">
             <div class="content text-center">
                 <h1>Contatos</h1>
-                <div class="text-right">
+                <div class="btn-toolbar justify-content-between" role="toolbar">
+                    <button type="button" class="btn btn-outline-danger" id="btnLogOut" style="margin-bottom: 10px;">Sair</button>
                     <button type="button" class="btn btn-outline-secondary" id="btnNovoContato" style="margin-bottom: 10px;">Novo Contato</button>
                 </div>
             </div>
@@ -87,7 +88,7 @@
         <!--Cadastro de contato-->
         <div class="container my-4" id="containerCadastroContato" style="display: none;">
             <input type="hidden" id="hddnIdContato">
-            <div class="content text-center">
+            <div class="content text-center" id="divTituloCadastroContato">
                 <h1>Novo Contato</h1>
             </div>
             <form id="formCadastroContato">
